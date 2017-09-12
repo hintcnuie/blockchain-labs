@@ -17,8 +17,8 @@ req_person3 = requests.post(apiPath + '/api/Person', json.dumps(person3), header
 
 # properties
 
-property1 = {'titleId': 'ID:2001', 'owner': 'resource:net.biz.digitalPropertyNetwork.Person#PID:101', 'information': 'Nice house in the mountains'}
+property1 = {'titleId': 'ID:2001', 'owner': 'resource:net.biz.digitalPropertyNetwork.Person#ID:1001', 'information': 'Nice house in the mountains'}
 req_property1 = requests.post(apiPath + '/api/LandTitle', json.dumps(property1), headers = headers)
 
-property2 = {'titleId': 'ID:2002', 'owner': 'resource:net.biz.digitalPropertyNetwork.Person#PID:102', 'information': 'Small house in a village'}
+property2 = {'titleId': 'ID:2002', 'owner': 'resource:net.biz.digitalPropertyNetwork.Person#ID:1002', 'information': 'Small house in a village'}
 req_property2 = requests.post(apiPath + '/api/LandTitle', json.dumps(property2), headers = headers)
