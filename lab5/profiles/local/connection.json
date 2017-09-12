@@ -1,0 +1,11 @@
+{
+    "type": "hlf",
+    "membershipServicesURL": "grpc://localhost:7054",
+    "peerURL": "grpc://localhost:7051",
+    "eventHubURL": "grpc://localhost:7053",
+    "keyValStore": "/Users/ian/.composer-credentials",
+    "deployWaitTime": 300,
+    "invokeWaitTime": 30,
+    "certificate": null,
+    "certificatePath": null
+}

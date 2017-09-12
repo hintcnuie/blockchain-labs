@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-striped')
+    tr
+      th transactionId
+      th type
+      th timestamp
+      
+      th 
+    each Trx, index in TrxList
+      tr
+        td #{TrxList[index].transactionId}
+        td #{TrxList[index].type} #{TrxList[index].registry}
+        td #{TrxList[index].timestamp}
+  
+        td
+          a(href="/Transaction/#{TrxList[index].transactionId}" class="btn btn-success" style="margin: 2px;") View
+      
+  br
+  a(href="/" class="btn btn-default" style="margin: 2px;") Back to Index

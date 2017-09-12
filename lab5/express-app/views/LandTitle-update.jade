@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  h1= title
+  p Enter details of the LandTitle to update
+  br
+  form(action="/LandTitle/update/x/#{id}" method="get" class="form-horizontal")
+  
+    .form-group
+      label(for="titleId" class="col-sm-2 control-label") titleId
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="titleId" value="#{LandTitle.titleId}" readonly)
+      
+    .form-group
+      label(for="owner" class="col-sm-2 control-label") owner
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="ownerName" value="#{LandTitle.ownerName}" readonly)
+        input(type="hidden" class="form-control" name="owner" value="#{LandTitle.owner}")
+        
+    .form-group
+      label(for="information" class="col-sm-2 control-label") information
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="information" value="#{LandTitle.information}")
+        
+    .form-group
+      label(for="forSale" class="col-sm-2 control-label") forSale
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="forSale" value="#{LandTitle.forSale}")
+        
+    div(class="col-sm-6 col-sm-offset-2")
+      button(type="submit" class="btn btn-warning") Update LandTitle
+      a(href="/LandTitle" class="btn btn-default" style="margin: 2px;") Back to list

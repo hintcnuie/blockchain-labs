@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-bordered')
+    
+    tr
+      td
+        b transaction Id
+      td #{Trx.transactionId}
+      
+    tr
+      td
+        b timestamp
+      td #{Trx.timestamp}
+      
+    tr
+      td
+        b content
+      td #{JSON.stringify(Trx, null, 2)}
+      
+  br
+  a(href="/Transaction" class="btn btn-default" style="margin: 2px;") Back to list

@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-striped')
+    tr
+      th salesId
+      th buyer
+      th seller
+      th title
+      
+      th 
+    each SalesAgreement, index in SalesAgreementList
+      tr
+        td #{SalesAgreementList[index].salesId}
+        td #{SalesAgreementList[index].buyer}
+        td #{SalesAgreementList[index].seller}
+        td #{SalesAgreementList[index].title}
+        
+        td
+          a(href="/SalesAgreement/#{SalesAgreementList[index].salesId}" class="btn btn-success" style="margin: 2px;") View
+          a(href="/SalesAgreement/update/#{SalesAgreementList[index].salesId}" class="btn btn-warning" style="margin: 2px;") Update
+          a(href="/SalesAgreement/delete/#{SalesAgreementList[index].salesId}" class="btn btn-danger" style="margin: 2px;") Delete
+  br
+  a(href="/SalesAgreement/new" class="btn btn-primary") Add New SalesAgreement
+  a(href="/" class="btn btn-default" style="margin: 2px;") Back to Index

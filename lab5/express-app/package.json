@@ -1,0 +1,27 @@
+{
+  "name": "express-app",
+  "description":"Hyperledger Composer Express project",
+  "version": "0.0.1",
+  "author": "ian",
+  "email": "ian",
+  "license": "Apache-2.0",
+  "scripts": {
+
+    "start": "node ./bin/www"
+
+  },
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "composer-client": "latest",
+    "composer-rest-server": "latest",
+    "concurrently": "^3.1.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
+    "unirest": "0.5.1"
+  }
+}

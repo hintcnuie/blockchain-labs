@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-bordered')
+    
+    tr
+      td
+        b personId
+      td #{Person.personId}
+      
+    tr
+      td
+        b firstName
+      td #{Person.firstName}
+      
+    tr
+      td
+        b lastName
+      td #{Person.lastName}
+      
+  br
+  a(href="/Person" class="btn btn-default" style="margin: 2px;") Back to list

@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-striped')
+    tr
+      th titleId
+      th owner
+      th information
+      th forSale
+      
+      th 
+    each LandTitle, index in LandTitleList
+      tr
+        td #{LandTitleList[index].titleId}
+        td #{LandTitleList[index].ownerName}
+        td #{LandTitleList[index].information}
+        td #{LandTitleList[index].forSale}
+        
+        td
+          a(href="/LandTitle/#{LandTitleList[index].titleId}" class="btn btn-success" style="margin: 2px;") View
+          a(href="/LandTitle/update/#{LandTitleList[index].titleId}" class="btn btn-warning" style="margin: 2px;") Update
+          a(href="/LandTitle/delete/#{LandTitleList[index].titleId}" class="btn btn-danger" style="margin: 2px;") Delete
+  br
+  a(href="/LandTitle/new" class="btn btn-primary") Add New LandTitle
+  a(href="/" class="btn btn-default" style="margin: 2px;") Back to Index

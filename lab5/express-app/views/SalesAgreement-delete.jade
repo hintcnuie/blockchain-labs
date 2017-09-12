@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-bordered')
+    
+    tr
+      td
+        b salesId
+      td #{SalesAgreement.salesId}
+      
+    tr
+      td
+        b buyer
+      td #{SalesAgreement.buyer}
+      
+    tr
+      td
+        b seller
+      td #{SalesAgreement.seller}
+      
+    tr
+      td
+        b title
+      td #{SalesAgreement.title}
+      
+  br
+  a(href="/SalesAgreement/delete/x/#{id}" class="btn btn-danger" style="margin: 2px;") Delete SalesAgreement?
+  a(href="/SalesAgreement" class="btn btn-default" style="margin: 2px;") Back to list

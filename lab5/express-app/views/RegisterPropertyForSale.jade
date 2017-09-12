@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+  p Enter details of the transaction
+  br
+  form(action="/trx/RegisterPropertyForSale/x" method="get" class="form-horizontal")
+  
+    .form-group
+      label(for="seller" class="col-sm-2 control-label") seller
+      .col-sm-6
+        input(type="text" class="form-control" name="seller")
+  
+    .form-group
+      label(for="title" class="col-sm-2 control-label") title
+      .col-sm-6
+        input(type="text" class="form-control" name="title")
+  
+    div(class="col-sm-6 col-sm-offset-2")
+      button(type="submit" class="btn btn-primary") Submit Transaction
+      a(href="/" class="btn btn-default" style="margin: 2px;") Back to Index

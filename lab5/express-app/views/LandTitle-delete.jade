@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-bordered')
+    
+    tr
+      td
+        b titleId
+      td #{LandTitle.titleId}
+      
+    tr
+      td
+        b owner
+      td #{LandTitle.owner}
+      
+    tr
+      td
+        b information
+      td #{LandTitle.information}
+      
+    tr
+      td
+        b forSale
+      td #{LandTitle.forSale}
+      
+  br
+  a(href="/LandTitle/delete/x/#{id}" class="btn btn-danger" style="margin: 2px;") Delete LandTitle?
+  a(href="/LandTitle" class="btn btn-default" style="margin: 2px;") Back to list

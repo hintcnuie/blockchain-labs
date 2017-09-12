@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  h1= title
+  p Enter details of the SalesAgreement to update
+  br
+  form(action="/SalesAgreement/update/x/#{id}" method="get" class="form-horizontal")
+  
+    .form-group
+      label(for="salesId" class="col-sm-2 control-label") salesId
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="salesId" value="#{SalesAgreement.salesId}" readonly)
+      
+    .form-group
+      label(for="buyer" class="col-sm-2 control-label") buyer
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="buyer" value="#{SalesAgreement.buyer}")
+        
+    .form-group
+      label(for="seller" class="col-sm-2 control-label") seller
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="seller" value="#{SalesAgreement.seller}")
+        
+    .form-group
+      label(for="title" class="col-sm-2 control-label") title
+      .col-sm-6
+      
+        input(type="text" class="form-control" name="title" value="#{SalesAgreement.title}")
+        
+    div(class="col-sm-6 col-sm-offset-2")
+      button(type="submit" class="btn btn-warning") Update SalesAgreement
+      a(href="/SalesAgreement" class="btn btn-default" style="margin: 2px;") Back to list

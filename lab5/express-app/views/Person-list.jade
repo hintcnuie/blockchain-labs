@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h1= title
+  br
+  table(class='table table-striped')
+    tr
+      th personId
+      th firstName
+      th lastName
+      
+      th 
+    each Person, index in PersonList
+      tr
+        td #{PersonList[index].personId}
+        td #{PersonList[index].firstName}
+        td #{PersonList[index].lastName}
+        
+        td
+          a(href="/Person/#{PersonList[index].personId}" class="btn btn-success" style="margin: 2px;") View
+          a(href="/Person/update/#{PersonList[index].personId}" class="btn btn-warning" style="margin: 2px;") Update
+          a(href="/Person/delete/#{PersonList[index].personId}" class="btn btn-danger" style="margin: 2px;") Delete
+  br
+  a(href="/Person/new" class="btn btn-primary") Add New Person
+  a(href="/" class="btn btn-default" style="margin: 2px;") Back to Index

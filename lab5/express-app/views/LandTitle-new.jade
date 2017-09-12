@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1= title
+  p Enter details of the new LandTitle
+  br
+  form(action="/LandTitle/create" method="get" class="form-horizontal")
+  
+    .form-group
+      label(for="owner" class="col-sm-2 control-label") owner
+      .col-sm-6
+        select(class="form-control" name="owner" onchange="document.getElementById('ownerId').selectedIndex=this.selectedIndex")
+          each owner in owners
+            option #{owner.firstName + " " + owner.lastName}
+        select(id="ownerId" name="ownerId" style="visibility:hidden")
+          each owner in owners
+            option #{owner.personId}  
+    .form-group
+      label(for="information" class="col-sm-2 control-label") information
+      .col-sm-6
+        input(type="text" class="form-control" name="information")
+  
+    .form-group
+      label(for="forSale" class="col-sm-2 control-label") forSale
+      .col-sm-6
+        input(type="text" class="form-control" name="forSale")
+  
+    div(class="col-sm-6 col-sm-offset-2")
+      button(type="submit" class="btn btn-primary") Add LandTitle
+      a(href="/LandTitle" class="btn btn-default" style="margin: 2px;") Back to list
