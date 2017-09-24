@@ -30,8 +30,8 @@ $ which cryptogen
 Come out of the _fabric-binaries_ directory and clone the Github repository to create a working directory - then switch into the _lab1_ sub-directory:
 ```bash
 $ cd ..
-$ git clone https://github.ibm.com/future-skills-cloud/blockchain.git
-$ cd blockchain/lab1
+$ git clone https://github.com/idpattison/blockchain-labs.git
+$ cd blockchain-labs/lab1
 ```
 > **NB:** this will download the files for all of the Blockchain labs.
 
