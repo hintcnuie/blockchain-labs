@@ -6,6 +6,8 @@ We’re going to create a simple Hyperledger Fabric v1.0 network on your machine
 
 > **Learning Point:** in Hyperledger Fabric v1.0, Peer nodes are responsible for agreeing on the veracity of transactions (this is called _endorsing_). The Orderer node is then responsible for bundling the endorsed transactions into a block, encrypting it and adding it to the blockchain.
 
+## Bluemix Account
+The early parts of this lab are done on a local machine. To complete the later part of the lab you will need an IBM Bluemix account. Bluemix is a complete cloud development and production platform offering virtual servers, containers, Cloud Foundry and serverless compute options, as well as a wide range of storage, database, analytics and AI services. A _Lite_ account is free, has no time limit, and offers sufficient resources to run your own test Blockchain and associated apps, You can sign up at http://bluemix.net/.
 
 ## Getting started - download the binaries and Docker images
 Start a Terminal window.  Create a new directory called _fabric-binaries_, switch into it, and run the command shown below to download the required binaries.  This command will also download the latest versions of the Hyperledger Fabric Docker images.
@@ -14,7 +16,7 @@ mkdir fabric-binaries
 cd fabric-binaries
 curl -sSL https://goo.gl/iX9dek | bash
 ```
-> **NB:** GitHub has been having problems serving raw files via its CDN, which is how the command above works. If you get timeouts, do the next section (_Create the working directory_) first, then come back to this point and run the _bootstrap_ script file in the _blockchain_ directory. 
+> **NB:** GitHub has been having problems serving raw files via its CDN, which is how the command above works. If you get timeouts, do the next section (_Create the working directory_) first, then come back to this point and run the _bootstrap_ script file in the _blockchain_ directory.
 
 > **Learning Point**: to create your Blockchain you will need to first create the keys and certificates which will keep it secure. The binaries you've just downloaded, _cryptogen_ and _configtxgen_, will do that.
 
@@ -38,8 +40,6 @@ cd blockchain/lab1
 > **NB:** this will download the files for all of the Blockchain labs.
 
 > **Learning Point**: in the command line, two dots (..) means the parent directory, so `cd ..` means 'go up one level'.
-
-> **Learning Point**: when using IBM’s Enterprise Github you will need to be connected to the IBM network and log in with your Github ID and a Personal Access Token (not your IBM password) – see https://github.ibm.com/settings/tokens for details.
 
 
 ## Create the keys and certificates

@@ -38,45 +38,45 @@ peer channel create -o orderer.example.com:7050 -c mychannel -f ./channel-artefa
 This creates a channel block (_mychannel.block_) in the local directory; use `ls` to see it. We will use that in the next step.
 
 Now we need to add all 4 peer nodes to the channel.  You do that with the `peer channel join` command, but you need to set a number of global variables which are specific to each channel before doing that. To simplify things, we've created a script (_set-globals.sh_) which does that for you. Run it with the appropriate peer number:
-- 0: org1, peer0
-- 1: org1, peer1
-- 2: org2, peer0
-- 3: org2, peer1
+- 10: org1, peer0
+- 11: org1, peer1
+- 20: org2, peer0
+- 21: org2, peer1
 
 Then, any `peer` command you issue will affect that peer, until you change it again.
 
 So to join all 4 peers to the channel, run:
 ```bash
-source scripts/set-globals.sh 0
+source scripts/set-globals.sh 10
 peer channel join -b mychannel.block
-source scripts/set-globals.sh 1
+source scripts/set-globals.sh 11
 peer channel join -b mychannel.block
-source scripts/set-globals.sh 2
+source scripts/set-globals.sh 20
 peer channel join -b mychannel.block
-source scripts/set-globals.sh 3
+source scripts/set-globals.sh 21
 peer channel join -b mychannel.block
 ```
 
 An _anchor peer_ is a peer (typically one per organisation) which all other peers can discover and communicate with. To define the anchor peers, update them as follows (note that you only need to do this with the 2 _peer0_ nodes):
 ```bash
-source scripts/set-globals.sh 0
+source scripts/set-globals.sh 10
 peer channel update -o orderer.example.com:7050 -c mychannel -f ./channel-artefacts/Org1MSPanchors.tx --tls true --cafile $ORDERER_CA
-source scripts/set-globals.sh 2
+source scripts/set-globals.sh 20
 peer channel update -o orderer.example.com:7050 -c mychannel -f ./channel-artefacts/Org2MSPanchors.tx --tls true --cafile $ORDERER_CA
 ```
 
 ## Deploy the chaincode
 Next we need to install the chaincode on the peers. We will call this chaincode _'mycc'_, and initially we will only install it on the anchor peers.  We're still in Terminal T2.
 ```bash
-source scripts/set-globals.sh 0
+source scripts/set-globals.sh 10
 peer chaincode install -n mycc -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02
-source scripts/set-globals.sh 2
+source scripts/set-globals.sh 20
 peer chaincode install -n mycc -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02
 ```
 
 We will now initialise the chaincode with its starter values. Note that we are passing 4 arguments to the init() function.  The result of this is to set the value of ‘a’ to 100 and ‘b’ to 200.  You can check this by looking at the chaincode, as above.  
 ```bash
-source scripts/set-globals.sh 2
+source scripts/set-globals.sh 20
 peer chaincode instantiate -o orderer.example.com:7050 --tls true --cafile $ORDERER_CA -C mychannel -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR    ('Org1MSP.member','Org2MSP.member')"
 ```
 
@@ -87,7 +87,7 @@ Note that we only need to instantiate the chaincode on one peer (in this case or
 
 To prove this, let's query the chaincode for the value of 'a' on org1, peer0.
 ```bash
-source scripts/set-globals.sh 0
+source scripts/set-globals.sh 10
 peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'
 ```
 The value of ‘a’ should be 100, which is the value we initialised it to.
@@ -97,7 +97,7 @@ You can also check that as we use the chaincode on each peer node, another conta
 ## Invoke a transaction
 Now we’re going to invoke a transaction to transfer 10 from ‘a’ to ‘b’, then we're going to query the value of 'a':
 ```bash
-source scripts/set-globals.sh 0
+source scripts/set-globals.sh 10
 peer chaincode invoke -o orderer.example.com:7050  --tls true --cafile $ORDERER_CA -C mychannel -n mycc -c '{"Args":["invoke","a","b","10"]}'
 peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'
 ```
@@ -105,7 +105,7 @@ You should see that the value of ‘a’ is now 90.
 
 For some added fun, we will now install the chaincode on another peer (org2, peer1) and query it there.  When we do this, it will apply the transactions which have already happened, in order to keep the network in sync.
 ```bash
-source scripts/set-globals.sh 3
+source scripts/set-globals.sh 21
 peer chaincode install -n mycc -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02
 peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'
 ```

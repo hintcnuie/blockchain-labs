@@ -35,11 +35,9 @@ bx plugin install container-service -r bluemix
 Point the Bluemix CLI at the API endpoint for your Bluemix setup, then login
 ```bash
 bx api api.ng.bluemix.net
-bx login --sso
+bx login
 ```
-This will ask for a one-time code, you can get that at https://iam.ng.bluemix.net/oidc/passcode
-
-> **NB:** if you're using an external Bluemix account, you will log in with `bx login` which will ask for your userid and the account password.
+This will ask for your userid and password.
 
 > **NB:** the API endpoint used is for IBM's US South region. If you are asked to use another region you will need to replace _ng_ in the API with the code for that region, e.g. _eu-gb_ for the UK.
 

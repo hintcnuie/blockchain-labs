@@ -1,5 +1,7 @@
 # Blockchain Lab 10 - Responding to events with Node-RED
 
+Node-RED is a visual, low-coding environment for wiring together APIs, online services and hardware devices to create new and interesting solutions.
+
 You can easily interact with your business model from Node-RED by using the HTTP nodes and making GET and POST calls.
 
 However you can also use Node-RED to respond to events in your business model.  In this lab we will send an SMS message every time a property is marked as 'for sale'. We will use the Twilio service to do that.
@@ -101,6 +103,4 @@ Wire the nodes together as shown, deploy, and execute another transaction.  If e
 
 You've now learned how to detect and respond to events coming from your business network.  You can use Node-RED to trigger many different actions in response - send a tweet, start a business process, execute a transaction on another Blockchain, etc.
 
-This is the end of the Blockchain labs. We would encourage you to share these skills with customers, and co-create prototype Blockchain solutions with them.
-
-Good luck!
+This is the end of the Blockchain labs. Thanks for following, and good luck with your Blockchain development!

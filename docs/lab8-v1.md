@@ -71,10 +71,8 @@ Once that is done, you’re all set to deploy.
 
 Using the Cloud Foundry CLI, login to Cloud Foundry (again, you’ll need a one-time code from the location shown)
 ```bash
-cf login --sso
+cf login
 ```
-
-> **NB:** again, if you're using an external Bluemix account, log in with `bx login` plus the userid and password.
 
 Now, simply push the application to Cloud Foundry
 ```bash
