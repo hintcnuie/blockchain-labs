@@ -11,8 +11,8 @@ In the next lab we will set up a REST API server and a UI app, both running on o
 ## Pull the Hyperledger Composer image
 You should already have the Hyperledger Fabric Docker images from the previous lab (if not you can run the `./downloadFabric.sh` script in the _lab3_ directory). We now need to get the Hyperledger Composer image from Docker Hub, and tag it as _latest_.
 ```bash
-$ docker pull hyperledger/composer-playground:0.11.1
-$ docker tag hyperledger/composer-playground:0.11.1 hyperledger/composer-playground:latest
+docker pull hyperledger/composer-playground:0.14.2
+docker tag hyperledger/composer-playground:0.14.2 hyperledger/composer-playground:latest
 ```
 
 ## Set up Hyperledger Composer
@@ -20,7 +20,7 @@ Switch to the _lab3_ directory.  In there you’ll find another _docker-compose.
 
 Open that file – again, if you’re using Atom you can do this with
 ```bash
-$ atom docker-compose.yml
+atom docker-compose.yml
 ```
 You’ll notice that this is somewhat different to the file we used in lab 1. This file will create five containers:
 - a single peer (_peer0.org1.example.com_) which we will use to interact with the Blockchain - we've already shown how transaction replication works, so we can now simplify down to a single peer for this lab
@@ -31,14 +31,9 @@ You’ll notice that this is somewhat different to the file we used in lab 1. Th
 
 > **Learning Point:** Hyperledger Fabric holds a record of transactions. To speed things up, it also holds the current state of the assets (which is the sum of all the transactions - the world state) in the peers. You can configure Hyperledger to use CouchDB (the database which underpins Cloudant) instead, and that's what we've done here - the docker-compose file shows how the peer looks to CouchDB for its state. By doing this, we can make complex queries on the current state of the assets in the Blockchain.
 
-The configuration for Composer's container is as follows:
-
-![alt-text](./images/lab3-img8.png "Docker Compose file")
 
 When we run `docker-compose up`, this will create our Hyperledger Fabric network along with a copy of Hyperledger Composer.  Some things to note:
 -	We’ve exposed port 8080, so we can run Composer via a web interface
--	We have provided a connection profile (the environment variable _COMPOSER\_CONFIG_) to tell Composer exactly how to access our Blockchain
-- That profile specifies where to find the credentials ("_keyValStore_"), so we need to make sure they are copied to that location
 - It also specifies a channel, so we need to set that up, as we did in lab 2
 
 You may also notice that the password for the _PeerAdmin_ user is not very secure.  For the development environment, _PeerAdmin_ is set up to accept any password.  Obviously you would remove this user for production.
@@ -47,8 +42,8 @@ You may also notice that the password for the _PeerAdmin_ user is not very secur
 
 Create a private network, then start all five containers with
 ```bash
-$ docker network create composer_default
-$ docker-compose up -d
+docker network create composer_default
+docker-compose up -d
 ```
 If you run `docker ps` you will see that we do now have five containers running.
 
@@ -59,39 +54,41 @@ In lab 2 you used `docker exec` to connect to and work directly with the peers, 
 
 To create a channel and connect our peer to it:
 ```bash
-$ docker exec peer0.org1.example.com peer channel create -o orderer.example.com:7050 -c composerchannel -f /etc/hyperledger/configtx/composer-channel.tx
-$ docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" peer0.org1.example.com peer channel join -b composerchannel.block
+docker exec peer0.org1.example.com peer channel create -o orderer.example.com:7050 -c composerchannel -f /etc/hyperledger/configtx/composer-channel.tx
+docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" peer0.org1.example.com peer channel join -b composerchannel.block
 ```
-
-## Copy the credentials
-As discussed above, we need to copy the credentials for our Blockchain network into the Hyperledger Composer container. For this development setup, the credentials are provided for us in the _lab3/creds_ directory.  Copy them across to _/home/composer/.connection-credentials_ on the _composer_ container like this. From the _lab3_ directory:
-```bash
-$ cd creds
-$ docker exec composer mkdir /home/composer/.composer-credentials
-$ tar -cv * | docker exec -i composer tar x -C /home/composer/.composer-credentials
-$ cd ..
-```
-> **NB:** don't worry about the 3rd line above, it's just bundling all the credentials up in to a compressed file, copying them, and unbundling, to save a few lines of code.
 
 ## Start the Hyperledger Composer Playground
-Open a web browser and navigate to http://localhost:8080.  Click through the splash screen and wait until the basic network is deployed to our Blockchain.  You can check that this has happened with `docker ps` - you should see a new container called something like _dev-peer0.org1.example.com-org-acme-biznet-0.10.0_.  If you're quick you will see that the _fabric-ccenv_ container also starts briefly, then terminates.  _fabric-ccenv_'s job is to create the containers for our chaincode.
-
-Once done, you should see the main Hyperledger Composer Playground window
+Open a web browser and navigate to http://localhost:8080 and click through the splash screen. Once done, you should see the main Hyperledger Composer Playground window:
 
 ![alt-text](./images/lab3-img3.png "Hyperledger Composer Playground")
 
+## Import the ID Card
+An ID card provides all of the information needed to connect to a blockchain business network. It is only possible to access a blockchain Business Network through a valid ID Card. An ID Card contains and Identity for a single Participant within a deployed business network. ID Cards are used in the Hyperledger Composer Playground to connect to deployed Business Networks. You can have multiple ID Cards for a single deployed Business Network, where those ID Cards belong to multiple Participants.
+
+To simplify things we have provided a ready-made ID card for our network located at `lab3/creds/Admin.card`. The Admin.card file is simply a zip file containing all of the required connection details and credentials. For your reference, you can view the full contents of the uncompressed file in the `lab3/creds/Admin` folder.
+
+Click _Import ID card_ and choose the ready-made card, `Admin.card`, to import the contents into your wallet.
+
+![alt-text](./images/lab3-img4.png "ID Card Import")
 
 ## Deploy a business network
-Composer is pre-populated with the _basic-sample-network_ – this is the ‘Hello World’ of business models.  There are three files, which you can access in the left sidebar:
--	the Model file (_lib/org.acme.sample.cto_) which defines the participants, assets and transactions, and the relationships between them
--	the Script file (_lib/logic.js_) which defines the transactions in JavaScript
--	the Access Control file (_permissions.acl_) which defines who can do what in the business network
+Composer provides several sample business networks, for example the  _basic-sample-network_ – this is the ‘Hello World’ of business models.  
 
-We are going to replace this basic network with a slightly more interesting one.  Click on _Import/Replace_ in the lower left, then from the list that appears, select _digitalproperty-network_ and click _Deploy_.
+However, we are going to start with slightly more interesting sample.  Click on _Deploy a new business network_ next to your new ID card.
+> **NB:** make sure you click the button in the lower part of the screen.  There is another _deploy a new business network_ button in the top part; this will deploy to the web browser only.
 
-This business network allows us to record details about people, properties (land titles) and property sales agreements, and allows us to invoke one transaction – _RegisterPropertyForSale_.   Examine the Model and Script files and familiarize yourself with the details of our business network.
+Then give the new network the name _digitalproperty-network_ and select the _digitalproperty-network_ sample from the list.  Use the ID and secret _Admin_ and _anything_, and click _Deploy_.
+> **NB:** for the development environment, the Admin password needs to be present, but is not checked.
 
-Click the globe icon in the top right, and you can see the connection profile we specified in our _docker-compose.yaml_ file.  This is how Hyperledger Composer is connecting to our Blockchain network.
+![alt-text](./images/lab3-img4_b.png "Deploying a sample network")
+
+Wait until the business network is deployed to our Blockchain.  You can check that this has happened with `docker ps` - you should see a new container called something like _dev-peer0.org1.example.com-digitalproperty-network-0.14.2_.  If you're quick you will see that the _fabric-ccenv_ container also starts briefly, then terminates.  _fabric-ccenv_'s job is to create the containers for our chaincode.
+
+This business network allows us to record details about people, properties (land titles) and property sales agreements, and allows us to invoke one transaction – _RegisterPropertyForSale_.   
+
+Click _Connect now_ from the wallet to examine the Model and Script files and familiarize yourself with the details of our business network.
+
 
 
 ## Entering data into the business network
@@ -135,7 +132,7 @@ function onRegisterPropertyForSale(propertyForSale) {
 
 This will modify the transaction to add a comment to the end of the property’s _information_ field.  Check the model file to see if you can follow the logical flow of what we’ve done here.
 
-Click _Deploy_ to redeploy the business network to the Blockchain.
+Click _Update_ to redeploy the business network to the Blockchain.
 
 Go back to the _Test_ tab and submit another _RegisterPropertyForSale_ transaction on a different property.  When it has completed, check that the property now has the "FOR SALE!!” comment in its _information_ field.
 
@@ -144,7 +141,7 @@ Continue with [lab 4](./lab4-v1.md).
 ## The Easy Way
 To set this up quickly, you can download all of the required files to an empty directory, create the containers, and start Hyperledger Composer with just one instruction:
 ```bash
-$ curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
+curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
 ```
 
 See https://hyperledger.github.io/composer/installing/using-playground-locally.html for more details.

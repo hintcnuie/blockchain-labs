@@ -9,6 +9,8 @@ This lab and [lab 8](./lab8-v1.md) will show you how to deploy your Hyperledger-
 
 > For production workloads, you can use the IBM Blockchain Platform, which is a highly available, secure and resilient managed Blockchain service on IBM Cloud. See [here](https://www.ibm.com/blockchain/platform/) for more details.
 
+> **NB:** This part of the lab draws heavily on the official documentation at https://ibm-blockchain.github.io/setup/.
+
 
 ## Install the pre-requisites
 As you'll be interacting with Kubernetes and with IBM Bluemix in this lab, you need to install two further command line tools at the levels shown (or higher):
@@ -25,33 +27,37 @@ Validate the installations with `kubectl version` and `bx -v`.
 Now add the container service plugin - this will let you interact with the IBM Container Service. Add the repo first (this tells the following command where to find the plugin to be installed) - you may get a message saying it already exists, if so that's fine.
 
 ```bash
-$ bx plugin repo-add bluemix https://plugins.ng.bluemix.net
-$ bx plugin install container-service -r bluemix
+bx plugin repo-add bluemix https://plugins.ng.bluemix.net
+bx plugin install container-service -r bluemix
 ```
 
 ## Set up a container cluster
 Point the Bluemix CLI at the API endpoint for your Bluemix setup, then login
 ```bash
-$ bx api api.ng.bluemix.net
-$ bx login
+bx api api.ng.bluemix.net
+bx login --sso
 ```
-This will ask for your userid and the account password.
+This will ask for a one-time code, you can get that at https://iam.ng.bluemix.net/oidc/passcode
 
-> **NB:** the API endpoint used is for IBM's US South region. If you want to use another region you will need to replace _ng_ in the API with the code for that region, e.g. _eu-gb_ for the UK.
+> **NB:** if you're using an external Bluemix account, you will log in with `bx login` which will ask for your userid and the account password.
+
+> **NB:** the API endpoint used is for IBM's US South region. If you are asked to use another region you will need to replace _ng_ in the API with the code for that region, e.g. _eu-gb_ for the UK.
 
 You will be asked to select an organisation (usually your email address) and a space (call it something like 'blockchain'). If you don't get asked, you can specify them with
 ```bash
-$ bx target -o <org-name> -s <space-name>
+bx target -o <org-name> -s <space-name>
 ```
+
+If you'd like to you can create a new space with the command `bx iam space-create <space-name>`
 
 Now create the cluster on the IBM Container Service
 ```bash
-$ bx cs cluster-create --name blockchain
+bx cs cluster-create --name blockchain
 ```
 
 This could take up to 30 minutes. You can check progress with
 ```bash
-$ bx cs clusters
+bx cs clusters
 ```
 Once the _State_ shows _normal_, it's done.  You should see something like this:
 ```bash
@@ -63,19 +69,19 @@ blockchain   0783c15e421749a59e2f5b7efdd351d1   normal   2017-05-09T16:13:11+000
 
 Once that's done, you can check the status of the worker node:
 ```bash
-$ bx cs workers blockchain
+bx cs workers blockchain
 ```
 This will show the public and private IP addresses.  Note down the public IP address, as you will use this later to access the Blockchain network.
 
 ## Configure kubectl to use the cluster
 Issue the following command
 ```bash
-$ bx cs cluster-config blockchain
+bx cs cluster-config blockchain
 ```
 
 The output will contain an `EXPORT` command which will point your local `kubectl` to the cluster.  Copy and paste that command into the command line and run it. It will be something like this:
 ```bash
-$ export KUBECONFIG=/home/*****/.bluemix/plugins/container-service/clusters/blockchain/kube-config-prod-dal10-blockchain.yml
+export KUBECONFIG=/home/*****/.bluemix/plugins/container-service/clusters/blockchain/kube-config-prod-dal10-blockchain.yml
 ```
 
 ## Install the Blockchain network
@@ -85,8 +91,8 @@ You might notice that we're using different container images here - e.g. _ibmblo
 
 From the _lab7_ directory:
 ```bash
-$ cd scripts
-$ ./create_all.sh --with-couchdb
+cd scripts
+./create_all.sh --with-couchdb
 ```
 > **NB:** if you don't need CouchDB, i.e. you don't need to use complex queries, you can omit the `--with-couchdb` parameter.
 
@@ -94,7 +100,7 @@ This will instruct Kubernetes to build the container network as defined by our c
 
 Once it's done you can use the Kubernetes Dashboard to explore the services and pods which have been created.  Run
 ```bash
-$ kubectl proxy
+kubectl proxy
 ```
 
 Now browse to http://localhost:8001/ui and you will see the dashboard.

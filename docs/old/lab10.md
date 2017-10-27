@@ -7,28 +7,33 @@ However you can also use Node-RED to respond to events in your business model.  
 ## Install Node-RED and the additional nodes
 If you haven't already, install Node-RED on your local machine. Then install the Hyperledger Composer and Twilio nodes.
 ```bash
-npm install -g --unsafe-perm node-red
-npm install -g node-red-contrib-hyperledger-composer
-npm install -g node-red-node-twilio
+$ sudo npm install -g --unsafe-perm node-red
+$ sudo npm install -g node-red-contrib-hyperledger-composer
+$ sudo npm install -g node-red-node-twilio
 ```
+> **Learning Point:** using `sudo` allows us to install the Node-RED files globally, so they will be available to all of our projects.  You may have to enter your system password.
 
 ## Create an event in the business model
-Assuming you're using the _digital-property_ model we created back in [lab 5](./lab5-v1.md), you can update this to create an event.
-
-> **NB:** the easiest way to make simple changes to the model is to start Composer Playground, as we did in [lab 8](./lab8-v1.md), make the edits there and click _Deploy_. However, you can also make the edits in the source code as we did in [lab 5](./lab5-v1.md), create the _*.bna_ file using `composer archive create` and import that into Composer Playground.  Your choice.  In the instructions here, we're using the Playground to do the edits.
-
-Open Composer Playground by browsing to http://your-ip-address:31080. You should see the business model which is currently deployed to your Blockchain. In the _Define_ tab, edit the _Model File_ to include the definition of our event at the bottom of the file:
+Assuming you're using the _digital-property_ model we created back in lab 5, you can update this to create an event.  Switch to the _business-network/models_ directory and update the _*.cto_ file to include the definition of our event at the bottom of the file:
 ```
 event PropertyRegisteredForSale {
   o String data
 }
 ```
+> **NB:** if you're using Composer v0.8 or earlier, you'll need this format:
+```
+event PropertyRegisteredForSale identified by eventId {
+  o String eventId
+  o String data
+}
+```
 
-Next, edit the _Script File_ and update the _onRegisterPropertyForSale_ function to look like this:
+Next, in the _business-network/lib_ directory, edit the _*.js_ file and update the _onRegisterPropertyForSale_ function to look like this:
 ```javascript
 function onRegisterPropertyForSale(propertyForSale) {
     console.log('### onRegisterPropertyForSale ' + propertyForSale.toString());
     propertyForSale.title.forSale = true;
+    propertyForSale.title.information += " - NOW FOR SALE!!";
 
     // create a new event
     var factory = getFactory();
@@ -49,26 +54,18 @@ function onRegisterPropertyForSale(propertyForSale) {
 
 Now every time this transaction is executed, an event will be created with an explanatory message in _event.data_.
 
-Hit _Deploy_ and the model will be redeployed to your Blockchain.  
-
-Now restart the REST server by deleting the pod in which it is running. To do that, first find the name of the pod with
+You will need to recreate the business network archive (_*.bna_) file and redeploy it to your Blockchain.  Remember to use the correct ID and password.
 ```bash
-kubectl get pods
-```
-Find the _composer-rest-server_ one and delete it (you'll need to use the specific name of your pod)
-```bash
-kubectl delete pods composer-rest-server-1555901040-pgmfb
+$ composer archive create -a digital-property.bna -t dir -n .
+$ composer network update -a digital-property.bna -p bluemix -i admin -s a6dd02366e
 ```
 
-Kubernetes will automatically restart the REST server, and it will pick up the modified business network model.
-
-> **NB:** you can also do this from the Kubernetes Dashboard that we saw in [lab7](./lab7-v1.md) - click on Pods, find the _composer-rest-server_ pod, click on the 3 vertical dots to the right, and click _Delete_.
-
+You will also need to restart the Composer REST Server - either locally, or by restarting the container on Bluemix.
 
 ## Start Node-RED and set up the flow
 Start Node-RED from any Terminal window
 ```bash
-node-red
+$ node-red
 ```
 Then browse to http://localhost:1880. You should see the Hyperledger Composer nodes towards the bottom of the left hand panel.
 
@@ -95,12 +92,6 @@ You will also need a _function_ node - the Twilio node expects the message to be
 
 Wire the nodes together as shown, deploy, and execute another transaction.  If everything is working, you should get an SMS in a few seconds.
 
-<img src="./images/lab10-img4.png" alt="SMS message" height="600" width="320"/>
-
-## Congratulations!
+<img src="./images/lab10-img4.png" alt="SMS message" style="max-width: 30%;"/>
 
 You've now learned how to detect and respond to events coming from your business network.  You can use Node-RED to trigger many different actions in response - send a tweet, start a business process, execute a transaction on another Blockchain, etc.
-
-This is the end of the Blockchain labs. We would encourage you to share these skills with customers, and co-create prototype Blockchain solutions with them.
-
-Good luck!

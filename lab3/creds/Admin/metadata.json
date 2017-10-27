@@ -1,0 +1,12 @@
+{
+    "name": "Admin",
+    "description": "",
+    "businessNetwork": "",
+    "enrollmentId": "Admin",
+    "enrollmentSecret": "",
+    "image": "",
+    "roles": [
+      "PeerAdmin",
+      "ChannelAdmin"
+    ]
+}

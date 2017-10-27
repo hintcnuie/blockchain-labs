@@ -11,10 +11,16 @@ So to access the Composer Playground, browse to http://your-ip-address:31080
 
 You can use the Playground as before to try out business networks. However, in a typical DevOps environment you would maintain the business network model source files and use them to build a _*.bna_ file, as we did in [lab 5](./lab5-v1.md) with
 ```bash
-$ composer archive create -a <network-name>.bna -t dir -n .
+composer archive create -a <network-name>.bna -t dir -n .
 ```
 Then import that _*.bna_ file into Composer Playground and deploy it from there.
 
+> **NB:** A valid ID card is available at `lab7/creds/PeerAdmin.card`. Otherwise you could choose to create the card yourself using information available in the `composer-playground.yaml` file.
+
+Alternatively you can use `composer network deploy` and `composer network update` from the Terminal.  You'll need to set up a local connection profile to do that - one is provided in the _lab7/profile_ directory.  Don't forget to clear out the _composer-credentials_ directory to avoid any conflict with older credential files.  The profile connects to Org1 of the network, and is called _ibm-cs-org1_, so you would call
+```bash
+composer network deploy -a <network-name>.bna -p ibm-cs-org1 -i admin -s adminpw
+```
 
 ## Deploy the REST server
 When the Composer REST server starts, it reads the model information from the business network which is deployed in the Blockchain.  Therefore you can't start it until _after_ you have deployed the business network.
@@ -22,9 +28,17 @@ When the Composer REST server starts, it reads the model information from the bu
 That's the reason we didn't deploy the REST server along with all the other services; we're going to do that now.
 
 We're still using the _lab7_ directory.
+
+Change the value of the _COMPOSER_BUSINESS_NETWORK_ in _kube-configs/composer-rest-server.yaml_ to match your composer network name, e.g. _digitalproperty-network_.
+```yaml
+- name: COMPOSER_BUSINESS_NETWORK
+  value: digitalproperty-network
+```
+After saving the file, run the following commands.
+
 ```bash
-$ kubectl create -f kube-configs/composer-rest-server-services.yaml
-$ kubectl create -f kube-configs/composer-rest-server.yaml
+kubectl create -f kube-configs/composer-rest-server-services.yaml
+kubectl create -f kube-configs/composer-rest-server.yaml
 ```
 
 > **Learning Point:** the _create-all.sh_ script we ran in the previous lab executed lots of `kubectl create` commands like this one, to start the other services and pods we needed.
@@ -57,12 +71,14 @@ Once that is done, you’re all set to deploy.
 
 Using the Cloud Foundry CLI, login to Cloud Foundry (again, you’ll need a one-time code from the location shown)
 ```bash
-$ cf login
+cf login --sso
 ```
+
+> **NB:** again, if you're using an external Bluemix account, log in with `bx login` plus the userid and password.
 
 Now, simply push the application to Cloud Foundry
 ```bash
-$ cf push
+cf push
 ```
 
 Wait a few moments, and your application will be deployed to Bluemix.  You should be able to access it at http://xxx-express-app.mybluemix.net or similar, depending on your application name in the manifest.
@@ -70,14 +86,14 @@ Wait a few moments, and your application will be deployed to Bluemix.  You shoul
 ## Cleaning up
 Leave your Blockchain network, REST server and app running as you'll need them for the next couple of labs.  However, when you need to clean up, you can remove the containers you deployed via Kubernetes with a single script. From the _lab7_ directory:
 ```bash
-$ cd scripts
-$ ./delete_all.sh
+cd scripts
+./delete_all.sh
 ```
 To remove the app you deployed to Cloud Foundry in Bluemix (replace with your specific app name):
 ```bash
-$ cf delete xxx-express-app
+cf delete xxx-express-app
 ```
 
 **Congratulations!**  You’ve created a Hyperledger Blockchain with a business network model and deployed that, together with a REST server, to a Kubernetes-managed container environment - and deployed your application, all on Bluemix.
 
-In [lab 9](./lab9-v1.md) we'll show you how to access your Blockchain model from OpenWhisk.
+In [lab 9](./lab9-v1.md) we'll show you how to access your Blockchain model from Cloud Functions.

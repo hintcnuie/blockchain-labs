@@ -10,32 +10,36 @@ We’re going to create a simple Hyperledger Fabric v1.0 network on your machine
 ## Getting started - download the binaries and Docker images
 Start a Terminal window.  Create a new directory called _fabric-binaries_, switch into it, and run the command shown below to download the required binaries.  This command will also download the latest versions of the Hyperledger Fabric Docker images.
 ```bash
-$ mkdir fabric-binaries
-$ cd fabric-binaries
-$ curl -sSL https://goo.gl/iX9dek | bash
+mkdir fabric-binaries
+cd fabric-binaries
+curl -sSL https://goo.gl/iX9dek | bash
 ```
+> **NB:** GitHub has been having problems serving raw files via its CDN, which is how the command above works. If you get timeouts, do the next section (_Create the working directory_) first, then come back to this point and run the _bootstrap_ script file in the _blockchain_ directory. 
+
 > **Learning Point**: to create your Blockchain you will need to first create the keys and certificates which will keep it secure. The binaries you've just downloaded, _cryptogen_ and _configtxgen_, will do that.
 
 You need to make sure that you can access these binaries from anywhere on your machine; to do that we need to update the _$PATH_ variable:
 ```bash
-$ export PATH=$PWD/bin:$PATH
+export PATH=$PWD/bin:$PATH
 ```
 and test it to see if we can see the binaries - the _which_ command should return the full path of the executable file:
 ```bash
-$ which cryptogen
+which cryptogen
 ```
 > **Learning Point**: use `docker images` to see the images in your local Docker repository - Hyperledger Fabric uses these images (such as _fabric-peer_, _fabric-orderer_, _fabric-ca_ and _fabric-tools_) to build the Hyperledger network.
 
 ## Create the working directory
 Come out of the _fabric-binaries_ directory and clone the Github repository to create a working directory - then switch into the _lab1_ sub-directory:
 ```bash
-$ cd ..
-$ git clone https://github.com/idpattison/blockchain-labs.git
-$ cd blockchain-labs/lab1
+cd ..
+git clone https://github.ibm.com/future-skills-cloud/blockchain.git
+cd blockchain/lab1
 ```
 > **NB:** this will download the files for all of the Blockchain labs.
 
 > **Learning Point**: in the command line, two dots (..) means the parent directory, so `cd ..` means 'go up one level'.
+
+> **Learning Point**: when using IBM’s Enterprise Github you will need to be connected to the IBM network and log in with your Github ID and a Personal Access Token (not your IBM password) – see https://github.ibm.com/settings/tokens for details.
 
 
 ## Create the keys and certificates
@@ -50,11 +54,11 @@ To do that you will need to use the binaries we just downloaded to generate some
 
 The _crypto-config.yaml_ file defines the organisational structure of our Hyperledger network.  Examine the file with your favourite coding editor – if you’re using Atom you can do this with
 ```bash
-$ atom crypto-config.yaml
+atom crypto-config.yaml
 ```
 You can see that it defines an Orderer organisation and two Peer organisations.  `cryptogen` uses this organisation map to generate a set of keys and certificates in the _crypto-config_ directory.
 ```bash
-$ cryptogen generate --config=./crypto-config.yaml
+cryptogen generate --config=./crypto-config.yaml
 ```
 
 The _configtx.yaml_ file lays out the network topology which will be used by our Hyperledger network, showing the relationships between the Consortium, Organisations and Peers. Note that we have defined 2 organisations, each with 2 peer nodes. `configtxgen` uses that topology to create the configuration artefacts.
@@ -63,18 +67,18 @@ The _configtx.yaml_ file lays out the network topology which will be used by our
 
 First define the location of the config files, then create the genesis block.
 ```bash
-$ export FABRIC_CFG_PATH=$PWD
-$ mkdir channel-artefacts
-$ configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artefacts/genesis.block
+export FABRIC_CFG_PATH=$PWD
+mkdir channel-artefacts
+configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artefacts/genesis.block
 ```
 You can see the file in the _channel-artefacts_ directory. Next create the channel configuration transaction.
 ```bash
-$ configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artefacts/channel.tx -channelID mychannel
+configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artefacts/channel.tx -channelID mychannel
 ```
 And finally the 2 peer anchor transactions.
 ```bash
-$ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artefacts/Org1MSPanchors.tx -channelID mychannel -asOrg Org1MSP
-$ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artefacts/Org2MSPanchors.tx -channelID mychannel -asOrg Org2MSP
+configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artefacts/Org1MSPanchors.tx -channelID mychannel -asOrg Org1MSP
+configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artefacts/Org2MSPanchors.tx -channelID mychannel -asOrg Org2MSP
 ```
 We're now ready to start our Hyperledger network.
 
@@ -84,7 +88,7 @@ Open the Docker Compose file – this is a series of instructions for Docker.  Y
 Let’s take a look at the file.  Docker will use this file to determine how many containers to start up, using which container images, and in what environment.
 
 ```bash
-$ atom docker-compose.yaml
+atom docker-compose.yaml
 ```
 
 
@@ -100,15 +104,17 @@ What you'll notice in here:
 ## Create the containers
 Run the Docker Compose file to create the containers and set up our Hyperledger network. The first time you do this you will also need to set a project name:
 ```bash
-$ export COMPOSE_PROJECT_NAME="hlf"
-$ docker-compose -f docker-compose.yaml up -d
+export COMPOSE_PROJECT_NAME="hlf"
+docker-compose -f docker-compose.yaml up -d
 ```
 
 > **Learning Point**: the –d flag tells Docker to run in ‘detached’ mode, in other words, control will be returned back to the command line once the containers are up and running.  If you want to see the console logs from the containers as they run, omit the –d.  You will then need to open a new terminal window.
 
+> **Note**: If you have ever used Hyperledger Fabric docker images before, you may see conflict notices when running docker-compose. To resolve remove or rename your existing images.
+
 You can see your containers running with
 ```bash
-$ docker ps
+docker ps
 
 CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS              PORTS                                              NAMES
 695aba81e94f        hyperledger/fabric-tools     "/bin/bash"         6 seconds ago       Up 4 seconds                                                           cli
@@ -121,13 +127,13 @@ a90e22a97239        hyperledger/fabric-peer      "peer node start"   8 seconds a
 ```
 and you can inspect the environment of a running container with
 ```bash
-$ docker inspect <container-id>
+docker inspect <container-id>
 ```
 Note that you can abbreviate the container ID (_695aba81e94f_ in the output above) to just the first three characters (_695_), to make it easier to type.
 
 If you want to see all of the current containers, whether they are running or stopped, use
 ```bash
-$ docker ps -a
+docker ps -a
 ```
 
 

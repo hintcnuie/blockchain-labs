@@ -20,6 +20,6 @@ The [Intro lab](./docs/lab-intro-v1.md) shows you how to set up your machine and
 
 [Lab 8](./docs/lab8-v1.md): deploy Composer Playground, Composer REST Server, and your app, to Bluemix.
 
-[Lab 9](./docs/lab9-v1.md): use OpenWhisk to trigger actions in your Hyperledger business network on Bluemix.
+[Lab 9](./docs/lab9-v1.md): use Cloud Functions to trigger actions in your Hyperledger business network on Bluemix.
 
 [Lab 10](./docs/lab10-v1.md): use Node-RED to respond to events in your Hyperledger business network.

@@ -4,7 +4,7 @@ This lab builds on the last and shows how to deploy Composer's REST API Server t
 
 First, we’re going to start the REST API server, running on our local machine, and show how we can use that to access the business network model we deployed in the previous lab.
 
-Second, we’re going to generate a simple web application, which will use Node.js and the Express framework.  This application will call the REST server we just set up to access the business network.
+Second, we’re going to generate a simple web application, which will use Node.js and the Angular 2 framework.  This application will call the REST server we just set up to access the business network.
 
 <img src="./images/lab3-img7.png" alt="Lab 3 & 4 architecture" style="width: 400px;"/>
 
@@ -14,10 +14,10 @@ Second, we’re going to generate a simple web application, which will use Node.
 ## Installing Hyperledger Composer
 Install Hyperledger Composer's Command Line Interface (CLI) and REST Server
 ```bash
-$ npm install -g composer-cli@0.11.1
-$ npm install -g composer-rest-server@0.11.1
+npm install -g composer-cli@0.14.2
+npm install -g composer-rest-server@0.14.2
 ```
-> **NB:** if you're comfortable with _npm_ you'll recognise this as a global installation, and you might be tempted to run it with `sudo` - don't do that here, it will cause errors. It should install successfully with your normal user account.
+> **NB:** if you're comfortable with _npm_ you'll recognise this as a global installation, and you might be tempted to run it with `sudo` - don't do that here, it will cause errors. It should install successfully with your normal user account. Instructions for resolving permissions errors are available at https://docs.npmjs.com/getting-started/fixing-npm-permissions
 
 ## Setting up the REST API server
 Hyperledger Composer is great for trying out business networks with models and transactions, but you need to expose your network to the outside world to make it useful.   To do that, we will start a REST API server, based on LoopBack.
@@ -29,8 +29,8 @@ In these commands, you need to replace `<HOME>` with your home directory
 -	for Mac this is _/Users/user-name_, e.g. _/Users/ian_
 -	for Ubuntu this is _/home/user-name_, e.g. _/home/fred_
 ```bash
-$ mkdir -p /<HOME>/.composer-connection-profiles/hlfv1
-$ atom /<HOME>/.composer-connection-profiles/hlfv1/connection.json
+mkdir -p /<HOME>/.composer-connection-profiles/hlfv1
+atom /<HOME>/.composer-connection-profiles/hlfv1/connection.json
 ```
 
 Copy the following connection profile into the new file.  You need to modify the _keyValStore_ parameter with your `<HOME>` directory as above.  Then save the file.
@@ -59,32 +59,31 @@ Copy the following connection profile into the new file.  You need to modify the
 }
 ```
 
-Next you need to set up the credentials to access the Blockchain network. They also live in a specific directory, _~/.composer-credentials_.  For the development environment they have been pre-generated, and are in the _creds_ directory within our _lab3_ directory, from where we need to copy them over.
+Next you need to set up the credentials to access the Blockchain network. They also live in a specific directory, _~/.composer-credentials_.  For the development environment they have been pre-generated, and are in the _creds_ directory within our _lab4_ directory, from where we need to copy them over.
 
-Navigate to the _lab3_ directory, then run:
+Navigate to the _lab4_ directory, then run:
 ```bash
-$ mkdir /<HOME>/.composer-credentials
-$ cp creds/* /<HOME>/.composer-credentials
+cd ../lab4
+mkdir /<HOME>/.composer-credentials
+cp creds/* /<HOME>/.composer-credentials
 ```
 
 Now run the REST server, passing in the following parameters:
 - the connection profile name (hlfv1)
-- the business network name (org-acme-biznet)
+- the business network name (digitalproperty-network)
 - the ID (PeerAdmin) and password (recall that for _PeerAdmin_ this can be anything)
 - that you don't want to use namespaces, secure APIs, WebSockets or TLS
 
 You can run the command on its own and enter the options manually:
 ```bash
-$ composer-rest-server
+composer-rest-server
 ```
 or you can do it all on the command line:
 ```bash
-$ composer-rest-server -p hlfv1 -n org-acme-biznet -i PeerAdmin -s whatever -N never
+composer-rest-server -p hlfv1 -n digitalproperty-network -i PeerAdmin -s whatever -N never
 ```
 
 > **Learning Point:** the name of the container which holds the chaincode is _dev-(peer-name)-(business-network-name)-(version)_, so something like _dev-peer0.org1.example.com-org-acme-biznet-0.11.1_. This is how Composer maps from the business network name you specify, to an actual piece of running chaincode. If you get errors when connecting to your business network, check the `docker ps` output to make sure you've got the right name.
-
-> **NB:** there is an issue with Composer Playground which means that the chaincode container is not renamed when a new business model is deployed. Hence we're using _org-acme-biznet_ here, even though we replaced that model with _digitalbusiness-network_. This will be fixed in a later version.
 
 Let the REST server start up (might take a minute).  You can now browse the API specification for your business model at http://localhost:3000/explorer. Click on _Show/Hide_ to expand each section.
 
@@ -105,7 +104,7 @@ query Q1 {
       WHERE (lastName == _$nameParam)
 }
 ```
-Click _Deploy_ to update the business network model.
+Click _Update_ to update the business network model.
 
 Stop and restart the REST server - kill the process in the Terminal window with _Ctrl+C_ the run the `composer-rest-server` command again. Then browse to the REST server with http://localhost:3000/explorer. You should now see a _Query_ section. Add some Person objects with different last names, and try the query.
 
@@ -118,20 +117,20 @@ You can use Yeoman to generate a basic application.  Yeoman is a code generator 
 
 Install Yeoman and the Express generator
 ```bash
-$ npm install -g yo
-$ npm install -g generator-idp-composer-express
+npm install -g yo
+npm install -g generator-idp-composer-express
 ```
 
-> **NB:** the generator is not part of the 'official' Hyperledger Composer package, and is provided as-is to help you quickly build a prototype for demonstration purposes.  **Do not** use it for production code.
+> **NB:** the generator is not part of the 'official' Hyperledger Composer package, and is provided as-is to help you quickly build a prototype for demonstration purposes.  Do not use it for production code.
 
 Run the Yeoman generator with
 ```bash
-$ yo idp-composer-express:express
+yo idp-composer-express:express
 ```
 
 ![alt-text](./images/lab4-img6.png "Yeoman Generator")
 
-Enter the responses as shown above, a brief discussion follows:
+Enter the responses as shown above (except for the business network identifier, which should be _digitalproperty-network_), a brief discussion follows:
 -	we are creating a Node.js Express application.  This framework is used by many production apps, e.g. eBay, LinkedIn, Uber and Walmart.
 -	we will connect the app to our existing business network running on Blockchain, and we need to provide the connection profile name, the business network name and our security credentials to do that.
 -	The name of the app doesn’t matter (here we used the default _express-app_), although this will be used for the directory which holds the generated files.
@@ -141,7 +140,7 @@ Enter the responses as shown above, a brief discussion follows:
 
 Yeoman will create a set of files in the _express-app_ directory (or whatever you named the app) and will then build and install the app for you.  Once completed, switch into that directory, and run
 ```bash
-$ npm start
+npm start
 ```
 You should be able to view your app at http://localhost:8000. Click on the _Person_ button to see a list of your participants.
 
