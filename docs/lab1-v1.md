@@ -35,7 +35,7 @@ Come out of the _fabric-binaries_ directory and clone the Github repository to c
 ```bash
 cd ..
 git clone https://github.com/idpattison/blockchain-labs.git
-cd blockchain/lab1
+cd blockchain-labs/lab1
 ```
 > **NB:** this will download the files for all of the Blockchain labs.
 
